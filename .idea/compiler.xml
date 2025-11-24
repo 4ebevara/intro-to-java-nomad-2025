@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="23">
-      <module name="beecrowd" target="23" />
-      <module name="intro-to-java-nomad-2025" target="23" />
-      <module name="lab-01" target="23" />
+    <bytecodeTargetLevel target="17">
+      <module name="beecrowd" target="17" />
+      <module name="intro-to-java-nomad-2025" target="17" />
+      <module name="lab-01" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>
