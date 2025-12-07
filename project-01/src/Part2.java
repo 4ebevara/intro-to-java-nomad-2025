@@ -17,7 +17,7 @@ public class Part2 extends PApplet {
 
     @Override
     public void settings() {
-        size(800, 600);
+        size(1200, 800);
     }
 
     @Override
