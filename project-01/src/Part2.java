@@ -1,87 +1,88 @@
-import java.util.Random;
 import processing.core.PApplet;
 
 public class Part2 extends PApplet {
 
-    /// Полями Глобальными переменными
-    public static float initValue;
-    public static float deltaY; // null
-    public static float y;
-    public static float deltaY2 = 0.5f;
-    public static float y2 = 0;
-    public static float deltaX;
-    public static float deltaAngle = PI/4;
-    public static float angle = PI/4;
+    int maxCount = 120;   // Максимум снежинок
+    int currentCount = 0; // Сколько сейчас на экране
 
-    public static float deltaAngle2 = PI/16;
-    public static float angle2 = PI/8;
+    float[] x = new float[maxCount];
+    float[] y = new float[maxCount];
+    float[] speed = new float[maxCount];
+    float[] rotation = new float[maxCount];
+    float[] rotationSpeed = new float[maxCount];
+    float[] size = new float[maxCount];
 
-    public static float x;
-    public static float[] arrOfX = new float[100];
-    public static float[] arrOfY = new float[100];
-    public static float[] arrOfDeltaY = new float[100];
-    public static float[] arrOfRotation = new float[100];
+    int lastSpawnTime = 0;    // время последнего появления снежинки
+    int spawnInterval = 150;  // задержка появления (меньше → быстрее рождаются)
 
-    /// 1
     @Override
     public void settings() {
         size(800, 600);
     }
 
-    /// 2
     @Override
     public void setup() {
-        initValue = PI / 8;
-        deltaY = 1;
-        y = 0;
-        deltaX = 10;
-        x = 0;
-
-        for (int i = 0; i < 100; i++) {
-            arrOfX[i] = random(0,500);
-            arrOfDeltaY[i] = 0;
-            arrOfRotation[i] = random(-PI/8, PI/8);
-        }
+        // Пустой экран — не заполняем массивы
     }
 
-    /// 3
     @Override
     public void draw() {
-        background(255, 255, 255);
-        //-----
-        pushMatrix();
-        translate(100,y);
-        rotate(angle);
-        //\
-        // \
-        line(0,0, 100, 0);
-        popMatrix();
+        background(0);
 
-        //-----
-        pushMatrix();
-        translate(400, y2);
-        rotate(angle2);
-        stroke(125,125,125);
-        strokeWeight(10);
-        line(-25,0, 25, 0);
-        line(0,-15, 0, 15);
-        line(0, 0, 10, -10);
+        stroke(255);
+        strokeWeight(2);
+        noFill();
 
-        popMatrix();
-
-        y += deltaY;
-        y2 += deltaY2;
-        angle += deltaAngle;
-        angle2 += 0.02f;
-
-        if (y > height) {
-            y = 0;
+        // Создаём новые снежинки постепенно
+        if (currentCount < maxCount && millis() - lastSpawnTime > spawnInterval) {
+            spawnSnowflake(currentCount);
+            currentCount++;
+            lastSpawnTime = millis();
         }
-        if (y2 > height) {
-            y2 = 0;
+
+        // Рисуем снежинки
+        for (int i = 0; i < currentCount; i++) {
+
+            pushMatrix();
+            translate(x[i], y[i]);
+            rotate(rotation[i]);
+
+            drawSnowflake(size[i]);
+
+            popMatrix();
+
+            // Падение
+            y[i] += speed[i];
+            rotation[i] += rotationSpeed[i];
+            x[i] += sin(rotation[i]) * 0.5;
+
+            // Перезапуск, если снежинка упала
+            if (y[i] > height) {
+                spawnSnowflake(i);
+                y[i] = 0;
+            }
         }
     }
 
+    // Создание одной снежинки
+    void spawnSnowflake(int i) {
+        x[i] = random(width);
+        y[i] = random(-200, -20);          // рождаются выше экрана
+        speed[i] = random(1, 3);
+        rotation[i] = random(0, TWO_PI);
+        rotationSpeed[i] = random(-0.02f, 0.02f);
+        size[i] = random(10, 25);
+    }
+
+    // Рисуем снежинку
+    void drawSnowflake(float s) {
+        for (int i = 0; i < 6; i++) {
+            line(0, 0, s, 0);
+            line(s * 0.6f, 0, s * 0.8f, s * 0.2f);
+            line(s * 0.6f, 0, s * 0.8f, -s * 0.2f);
+            rotate(PI / 3);
+        }
+    }
 
     public static void main(String[] args) {
         PApplet.main("Part2");
