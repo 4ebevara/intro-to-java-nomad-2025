@@ -2,8 +2,8 @@ import processing.core.PApplet;
 
 public class Part2 extends PApplet {
 
-    int maxCount = 120;   // Максимум снежинок
-    int currentCount = 0; // Сколько сейчас на экране
+    int maxCount = 100;
+    int currentCount = 0;
 
     float[] x = new float[maxCount];
     float[] y = new float[maxCount];
@@ -12,8 +12,8 @@ public class Part2 extends PApplet {
     float[] rotationSpeed = new float[maxCount];
     float[] size = new float[maxCount];
 
-    int lastSpawnTime = 0;    // время последнего появления снежинки
-    int spawnInterval = 150;  // задержка появления (меньше → быстрее рождаются)
+    int lastSpawnTime = 0;
+    int spawnInterval = 150;
 
     @Override
     public void settings() {
@@ -22,7 +22,6 @@ public class Part2 extends PApplet {
 
     @Override
     public void setup() {
-        // Пустой экран — не заполняем массивы
     }
 
     @Override
@@ -33,14 +32,14 @@ public class Part2 extends PApplet {
         strokeWeight(2);
         noFill();
 
-        // Создаём новые снежинки постепенно
+        // постепенно создание снежков, что бы сразу не было много
         if (currentCount < maxCount && millis() - lastSpawnTime > spawnInterval) {
             spawnSnowflake(currentCount);
             currentCount++;
             lastSpawnTime = millis();
         }
 
-        // Рисуем снежинки
+        // снежинка
         for (int i = 0; i < currentCount; i++) {
 
             pushMatrix();
@@ -56,25 +55,24 @@ public class Part2 extends PApplet {
             rotation[i] += rotationSpeed[i];
             x[i] += sin(rotation[i]) * 0.5;
 
-            // Перезапуск, если снежинка упала
+            // если снежинка упала заново падает
             if (y[i] > height) {
                 spawnSnowflake(i);
                 y[i] = 0;
             }
         }
     }
-
-    // Создание одной снежинки
+    // создание сснежинки
     void spawnSnowflake(int i) {
         x[i] = random(width);
-        y[i] = random(-200, -20);          // рождаются выше экрана
+        y[i] = random(-200, -20);          // что бы появлялись выше жкрана
         speed[i] = random(1, 3);
         rotation[i] = random(0, TWO_PI);
         rotationSpeed[i] = random(-0.02f, 0.02f);
         size[i] = random(10, 25);
     }
 
-    // Рисуем снежинку
+    // рисую снежинку
     void drawSnowflake(float s) {
         for (int i = 0; i < 6; i++) {
             line(0, 0, s, 0);
